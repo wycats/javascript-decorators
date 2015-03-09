@@ -77,7 +77,7 @@ class Person {
 }
 
 function nonenumerable(target, name, descriptor) {
-  descriptor.enumerable = val;
+  descriptor.enumerable = false;
   return descriptor;
 }
 ```
