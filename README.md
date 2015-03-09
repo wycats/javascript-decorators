@@ -407,55 +407,51 @@ var o = (function () {
 
 # Grammar
 
-## Expressions
+&emsp;&emsp;*DecoratorList*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp; *Decorator*<sub> [?Yield]</sub>
 
-# Grammar for Decorator Syntax
+&emsp;&emsp;*Decorator*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;`@`&emsp;*AssignmentExpression*<sub> [?Yield]</sub>
 
-  *DecoratorList*<sub> [Yield]</sub> :
-   *DecoratorList*<sub> [?Yield]opt</sub>  *Decorator*<sub> [?Yield]</sub>
+&emsp;&emsp;*PropertyDefinition*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*IdentifierReference*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*CoverInitializedName*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*PropertyName*<sub> [?Yield]</sub>&emsp; `:`&emsp;*AssignmentExpression*<sub> [In, ?Yield]</sub>  
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;*MethodDefinition*<sub> [?Yield]</sub>
 
-  *Decorator*<sub> [Yield]</sub> :
-   `@` *AssignmentExpression*<sub> [?Yield]</sub>
+&emsp;&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;`[`&emsp;*Expression*<sub> [In, ?Yield]</sub>&emsp;`]`
 
-  *PropertyDefinition*<sub> [Yield]</sub> :
-   *IdentifierReference*<sub> [?Yield]</sub>
-   *CoverInitializedName*<sub> [?Yield]</sub>
-   *PropertyName*<sub> [?Yield]</sub>  `:` *AssignmentExpression*<sub> [In, ?Yield]</sub>
-   *DecoratorList*<sub> [?Yield]opt</sub> *MethodDefinition*<sub> [?Yield]</sub>
+NOTE	The production *CoverMemberExpressionSquareBracketsAndComputedPropertyName* is used to cover parsing a *MemberExpression* that is part of a *Decorator* inside of an *ObjectLiteral* or *ClassBody*, to avoid lookahead when parsing a decorator against a *ComputedPropertyName*. 
 
-  *CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [Yield]</sub> :
-   `[` *Expression*<sub> [In, ?Yield]</sub> `]`
+&emsp;&emsp;*PropertyName*<sub> [Yield, GeneratorParameter]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*LiteralPropertyName*  
+&emsp;&emsp;&emsp;[+GeneratorParameter] *CoverMemberExpressionSquareBracketsAndComputedPropertyName*  
+&emsp;&emsp;&emsp;[~GeneratorParameter] *CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>
 
-NOTE  The production *CoverMemberExpressionSquareBracketsAndComputedPropertyName* is used to cover parsing a *MemberExpression* that is part of a *Decorator* inside of an *ObjectLiteral* or *ClassBody*, to avoid lookahead when parsing a decorator against a *ComputedPropertyName*.
+&emsp;&emsp;*MemberExpression*<sub> [Yield]</sub>&emsp; :  
+&emsp;&emsp;&emsp;[Lexical goal *InputElementRegExp*] *PrimaryExpression*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;`.`&emsp;*IdentifierName*  
+&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*TemplateLiteral*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*SuperProperty*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*NewSuper*&emsp;*Arguments*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;`new`&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*Arguments*<sub> [?Yield]</sub>
 
-  *PropertyName*<sub> [Yield, GeneratorParameter]</sub> :
-   *LiteralPropertyName*
-   [+GeneratorParameter] *CoverMemberExpressionSquareBracketsAndComputedPropertyName*
-   [~GeneratorParameter] *CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>
+&emsp;&emsp;*SuperProperty*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;`super`&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;`super`&emsp;`.`&emsp;*IdentifierName*
 
-  *MemberExpression*<sub> [Yield]</sub>  :
-   [Lexical goal *InputElementRegExp*] *PrimaryExpression*<sub> [?Yield]</sub>
-   *MemberExpression*<sub> [?Yield]</sub> *CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>
-   *MemberExpression*<sub> [?Yield]</sub> `.` *IdentifierName*
-   *MemberExpression*<sub> [?Yield]</sub> *TemplateLiteral*<sub> [?Yield]</sub>
-   *SuperProperty*<sub> [?Yield]</sub>
-   *NewSuper* *Arguments*<sub> [?Yield]</sub>
-   `new` *MemberExpression*<sub> [?Yield]</sub> *Arguments*<sub> [?Yield]</sub>
+&emsp;&emsp;*ClassDeclaration*<sub> [Yield, Default]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;`class`&emsp;*BindingIdentifier*<sub> [?Yield]</sub>&emsp;*ClassTail*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;[+Default] *DecoratorList*<sub> [?Yield]opt</sub>&emsp;`class`&emsp;*ClassTail*<sub> [?Yield]</sub>
 
-  *SuperProperty*<sub> [Yield]</sub> :
-   `super` *CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>
-   `super` `.` *IdentifierName*
+&emsp;&emsp;*ClassExpression*<sub> [Yield, GeneratorParameter]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;`class`&emsp;*BindingIdentifier*<sub> [?Yield]opt</sub>&emsp;*ClassTail*<sub> [?Yield, ?GeneratorParameter]</sub>
 
-  *ClassDeclaration*<sub> [Yield, Default]</sub> :
-   *DecoratorList*<sub> [?Yield]opt</sub> `class` *BindingIdentifier*<sub> [?Yield]</sub> *ClassTail*<sub> [?Yield]</sub>
-   [+Default] *DecoratorList*<sub> [?Yield]opt</sub> `class` *ClassTail*<sub> [?Yield]</sub>
-
-  *ClassExpression*<sub> [Yield, GeneratorParameter]</sub> :
-   *DecoratorList*<sub> [?Yield]opt</sub> `class` *BindingIdentifier*<sub> [?Yield]opt</sub> *ClassTail*<sub> [?Yield, ?GeneratorParameter]</sub>
-
-  *ClassElement*<sub> [Yield]</sub> :
-   *DecoratorList*<sub> [?Yield]opt</sub> *MethodDefinition*<sub> [?Yield]</sub>
-   *DecoratorList*<sub> [?Yield]opt</sub> `static` *MethodDefinition*<sub> [?Yield]</sub>
+&emsp;&emsp;*ClassElement*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;*MethodDefinition*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;`static`&emsp;*MethodDefinition*<sub> [?Yield]</sub>
 
 # Notes
 
