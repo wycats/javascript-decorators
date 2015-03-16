@@ -54,7 +54,7 @@ class Person {
 
 class Person {
   constructor() {
-    let _born = Object.getPropertyDescriptor('born');
+    let _born = Object.getPropertyDescriptor(this, 'born');
     this.born = _born.initializer.call(this);
   }
 }
@@ -101,7 +101,7 @@ function readonly(target, name, desc) {
 
 class Person {
   constructor() {
-    let _born = Object.getPropertyDescriptor('born');
+    let _born = Object.getPropertyDescriptor(this, 'born');
     this.born = _born.initializer.call(this);
   }
 }
