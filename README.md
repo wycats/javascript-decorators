@@ -7,10 +7,6 @@ While ES5 object literals support arbitrary expressions in the value position,
 ES6 classes only support literal functions as values. Decorators restore the
 ability to run code at design time, while maintaining a declarative syntax.
 
-# Motivation
-
-[TODO]
-
 # Detailed Design
 
 A decorator is:
