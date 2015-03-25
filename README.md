@@ -328,7 +328,7 @@ var o = (function () {
     _temp = G(_obj, "bar",
       _temp = void 0) || _temp) || _temp;
   if (_temp) Object.defineProperty(_obj, "bar", _temp);
-  return Foo;
+  return _obj;
 })();
 ```
 
@@ -345,7 +345,7 @@ var o = (function () {
         _temp = G(_obj, "bar",
             _temp = void 0) || _temp) || _temp;
     if (_temp) Object.defineProperty(_obj, "bar", _temp);
-    return Foo;
+    return _obj;
 })();
 ```
 
@@ -376,7 +376,7 @@ var o = (function () {
     _temp = G(_obj, "bar",
       _temp = void 0) || _temp) || _temp;
   if (_temp) Object.defineProperty(_obj, "bar", _temp);
-  return Foo;
+  return _obj;
 })();
 ```
 
@@ -397,7 +397,7 @@ var o = (function () {
     _temp = G(_obj, "bar",
       _temp = void 0) || _temp) || _temp;
   if (_temp) Object.defineProperty(_obj, "bar", _temp);
-  return Foo;
+  return _obj;
 })();
 ```
 
