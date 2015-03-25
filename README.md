@@ -290,7 +290,7 @@ var Foo = (function () {
   }
   Object.defineProperty(Foo.prototype, "bar", {
     get: function () { },
-    set: function (value) { }
+    set: function (value) { },
     enumerable: true, configurable: true
   });
 
@@ -388,7 +388,7 @@ var o = (function () {
   }
   Object.defineProperty(_obj, "bar", {
     get: function () { },
-    set: function (value) { }
+    set: function (value) { },
     enumerable: true, configurable: true
   });
 
