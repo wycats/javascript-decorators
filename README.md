@@ -110,8 +110,8 @@ function memoize(target, name, descriptor) {
 }
 
 function memoizationFor(obj) {
-  let table = memoized.get(this);
-  if (!table) { table = Object.create(null); memoized.set(this, table); }
+  let table = memoized.get(obj);
+  if (!table) { table = Object.create(null); memoized.set(obj, table); }
   return table;
 }
 ```
