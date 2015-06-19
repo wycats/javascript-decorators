@@ -404,10 +404,35 @@ var o = (function () {
 # Grammar
 
 &emsp;&emsp;*DecoratorList*<sub> [Yield]</sub>&emsp;:  
-&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp; *Decorator*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;*Decorator*<sub> [?Yield]</sub>  
+
+&emsp;&emsp;*DecoratorMemberExpression*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*PrimaryExpression*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*DecoratorMemberExpression*<sub> [?Yield]</sub>&emsp;`.`&emsp;*IdentifierName*  
+&emsp;&emsp;&emsp;*DecoratorMemberExpression*<sub> [?Yield]</sub&emsp; *TemplateLiteral*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*SuperProperty*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*MetaProperty*  
+
+NOTE	The production *DecoratorMemberExpression* is to prohibit decorators such as `@ new F()`, to eliminate multiple ambiguous syntactic forms
+
+&emsp;&emsp;*DecoratorCallExpression*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*Arguments*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*SuperCall*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*CallExpression*<sub> [?Yield]</sub>&emsp;*Arguments*<sub> [?Yield]</sub>  
+&emsp;&emsp;&emsp;*CallExpression*<sub> [?Yield]</sub>&emsp;`[`&emsp;*Expression*<sub> [In, ?Yield]</sub>&emsp;`]`  
+&emsp;&emsp;&emsp;*CallExpression*<sub> [?Yield]</sub>&emsp;`.`&emsp;*IdentifierName*  
+&emsp;&emsp;&emsp;*CallExpression*<sub> [?Yield]</sub>&emsp;*TemplateLiteral*<sub> [?Yield]</sub>  
+
+NOTE	The production *DecoratorCallExpression* is to prohibit decorators such as `@ new F()`, to eliminate multiple ambiguous syntactic forms
+
+&emsp;&emsp;*DecoratorExpression*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;&emsp;*ParenthesizedExpression*<sub> [?Yield]opt</sub>  
+&emsp;&emsp;&emsp;*DecoratorMemberExpression*<sub> [?Yield]opt</sub>  
+&emsp;&emsp;&emsp;*DecoratorCallExpression*<sub> [?Yield]opt</sub>  
 
 &emsp;&emsp;*Decorator*<sub> [Yield]</sub>&emsp;:  
-&emsp;&emsp;&emsp;`@`&emsp;*AssignmentExpression*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;`@`&emsp;*DecoratorExpression*<sub> [?Yield]</sub>
 
 &emsp;&emsp;*PropertyDefinition*<sub> [Yield]</sub>&emsp;:  
 &emsp;&emsp;&emsp;*IdentifierReference*<sub> [?Yield]</sub>  
