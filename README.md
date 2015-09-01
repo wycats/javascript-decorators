@@ -407,7 +407,7 @@ var o = (function () {
 &emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp; *Decorator*<sub> [?Yield]</sub>
 
 &emsp;&emsp;*Decorator*<sub> [Yield]</sub>&emsp;:  
-&emsp;&emsp;&emsp;`@`&emsp;*AssignmentExpression*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;`@`&emsp;*LeftHandSideExpression*<sub> [?Yield]</sub>
 
 &emsp;&emsp;*PropertyDefinition*<sub> [Yield]</sub>&emsp;:  
 &emsp;&emsp;&emsp;*IdentifierReference*<sub> [?Yield]</sub>  
