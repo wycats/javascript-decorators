@@ -130,4 +130,4 @@ The fact that decorators are a declarative mechanism for working with
 descriptors is a key part of the decorator proposal, and cuts with the
 grain of the existing JavaScript reflection mechanism.
 
-[class-properties]: https://gist.github.com/jeffmo/054df782c05639da2adb
+[class-properties]: https://github.com/jeffmo/es-class-properties
