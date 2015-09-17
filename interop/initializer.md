@@ -1,3 +1,6 @@
+> This file is under active development. Refer to `interop/reusability.md` for the
+> most up to date description.
+
 This document is a high-level explainer of how property decorators
 interoperate with the [class properties][class-properties] proposal.
 

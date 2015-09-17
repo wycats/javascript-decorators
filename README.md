@@ -1,3 +1,6 @@
+> This file is under active development. Refer to `interop/reusability.md` for the
+> most up to date description.
+
 # Summary
 
 Decorators make it possible to annotate and modify classes and properties at
@@ -13,8 +16,8 @@ A decorator is:
 
 * an expression
 * that evaluates to a function
-* that takes the target, name, and property descriptor as arguments
-* and optionally returns a property descriptor to install on the target object
+* that takes the target, name, and decorator descriptor as arguments
+* and optionally returns a decorator descriptor to install on the target object
 
 Consider a simple class definition:
 
@@ -49,22 +52,25 @@ Now, before installing the descriptor onto `Person.prototype`, the engine first
 invokes the decorator:
 
 ```js
-let descriptor = {
-  value: specifiedFunction,
+let description = {
+  type: 'method',
+  initializer: () => specifiedFunction,
   enumerable: false,
   configurable: true,
   writable: true
 };
 
-descriptor = readonly(Person.prototype, 'name', descriptor) || descriptor;
-Object.defineProperty(Person.prototype, 'name', descriptor);
+description = readonly(Person.prototype, 'name', description) || description;
+defineDecoratedProperty(Person.prototype, 'name', description);
+
+function defineDecoratedProperty(target, { initializer, enumerable, configurable, writable }) {
+  Object.defineProperty(target, { value: initializer(), enumerable, configurable, writable });
+}
 ```
 
-The decorator has the same signature as `Object.defineProperty`, and has an
-opportunity to intercede before the relevant `defineProperty` actually occurs.
+The has an opportunity to intercede before the relevant `defineProperty` actually occurs.
 
-A decorator that precedes syntactic getters and/or setters operates on the
-accessor descriptor:
+A decorator that precedes syntactic getters and/or setters operates on an accessor description:
 
 ```js
 class Person {
@@ -72,7 +78,14 @@ class Person {
   get kidCount() { return this.children.length; }
 }
 
-function nonenumerable(target, name, descriptor) {
+let description = {
+  type: 'accessor',
+  get: specifiedGetter,
+  enumerable: true,
+  configurable: true
+}
+
+function nonenumerable(target, name, description) {
   descriptor.enumerable = false;
   return descriptor;
 }
