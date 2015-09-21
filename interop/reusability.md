@@ -740,19 +740,17 @@ the expression.
 
 First, the existing definition of `PropertyDefinition : PropertyName : AssignmentExpression`
 
-1. Let propKey be the result of evaluating PropertyName.
-2. ReturnIfAbrupt(propKey).
-3. Let exprValueRef be the result of evaluating AssignmentExpression.
-4. Let propValue be GetValue(exprValueRef).
-5. ReturnIfAbrupt(propValue).
-6. If IsAnonymousFunctionDefinition(AssignmentExpression) is true, then
-   a. Let hasNameProperty be HasOwnProperty(propValue, "name").
-   b. ReturnIfAbrupt(hasNameProperty).
-   c. If hasNameProperty is false, perform SetFunctionName(propValue, propKey).
-7. Assert: enumerable is true.
-8. Return CreateDataPropertyOrThrow(object, propKey, propValue).
-
----
+1. Let *propKey* be the result of evaluating *PropertyName*.
+2. `ReturnIfAbrupt(propKey)`.
+3. Let *exprValueRef* be the result of evaluating *AssignmentExpression*.
+4. Let *propValue* be `GetValue(exprValueRef)`.
+5. `ReturnIfAbrupt(propValue)`.
+6. If `IsAnonymousFunctionDefinition(AssignmentExpression)` is `true`, then
+   a. Let *hasNameProperty* be `HasOwnProperty(propValue, "name")`.
+   b. `ReturnIfAbrupt(hasNameProperty)`.
+   c. If *hasNameProperty* is `false`, perform `SetFunctionName(propValue, propKey)`.
+7. Assert: *enumerable* is true.
+8. Return `CreateDataPropertyOrThrow(object, propKey, propValue)`.
 
 ### DecoratedPropertyDefinition
 
@@ -772,44 +770,75 @@ The two top-level expressions in the decorated `PropertyDefinition` are `Propert
 For `DecoratedPropertyDefinition`, the first step is to reify each of the two expressions
 into a function that, when called, evaluates the expression (a "thunk").
 
-> The following algorithm uses the suffix `?` as a shorthand for `ReturnIfAbrupt`.
+### Main Algorithm
+
+The following algorithm uses the suffix `?` as a shorthand for `ReturnIfAbrupt`.
+
+---
 
 1. Let *propertyNameThunk* = `Thunk(PropertyName)`
 2. Let *assignmentExpressionThunk* = `Thunk(AssignmentExpression)`
-3. Let *decoratorDescriptor* = 
-
-```js
-{
-  type: 'property-definition',
-  name: propertyNameThunk,
-  initializer: assignmentExpressionThunk,
-  enumerable: true,
-  configurable: true,
-  writable: true
-}
-```
-
+3. Let *decoratorDescriptor* = `PropertyDefinitionDescriptor(propertyNameThunk, assignmentExpressionThunk)`
 4. For each `DecoratorExpression`, in reverse order:
   1. Let *decorator* = `GetValue(Evaluate(DecoratorExpression))?`
-  2. Let *possibleDescriptor* = `decorator(object, decoratorDescriptor)?`
+  2. Let *possibleDescriptor* = `Call(decorator, [object, decoratorDescriptor])?`
   3. If *possibleDescriptor* is not `undefined`, *decoratorDescriptor* = *possibleDescriptor*.
-5. Let *propNameThunk* = `GetValue(Get(decoratorDescriptor, 'name'))?`
-6. Let *propName* = `Call(propNameThunk)?`
-7. Let *enumerable* = `GetValue(Get(decoratorDescriptor, 'enumerable'))?`
-8. Let *configurable* = `GetValue(Get(decoratorDescriptor, 'configurable'))?`
-9. Let *writable* = `GetValue(Get(decoratorDescriptor, 'writable'))?`
-10. If `'initializer'` in *decoratorDescriptor*:
-  1. assert `'get'` not in *decoratorDescriptor*, TypeError
-  2. assert `'set'` not in *decoratorDescriptor*, TypeError
-  2. Let *propValueThunk* = `GetValue(Get(decoratorDescriptor, 'initializer'))?`.
-  3. Let *value* = `Call(propValueThunk)?`.
-  4. return `object.[[DefineOwnProperty]](propName, { value, enumerable, configurable, writable })?`
-11. Otherwise, if `'get'` in *decoratorDescriptor* or `'set'` in *decoratorDescriptor*:
-  1. Let *get* = `GetValue(Get(decoratorDescriptor, 'get'))?`
-  2. Let *set* = `GetValue(Get(decoratorDescriptor, 'set'))?`
-  3. return `object.[[DefineOwnProperty]](propName, { get, set, enumerable, configurable, writable })?`
-12. Otherwise:
-  1. Throw a TypeError
+5. Let *property* = `Get(decoratorDescriptor, 'property')?`
+6. Let *updatedPropertyNameThunk* = `Get(property, 'name')?`
+7. Let *initializer* = `Get(property, 'initializer')?`
+6. Let *propName* = `Call(updatedPropertyNameThunk)?`
+7. Let *enumerable* = `Get(decoratorDescriptor, 'enumerable')?`
+8. Let *configurable* = `Get(decoratorDescriptor, 'configurable')?`
+9. Let *writable* = `Get(decoratorDescriptor, 'writable')?`
+10. If `IsCallable(initializer)`:
+  1. Let *value* = `Call(initializer)?`
+  2. Return `object.[[DefineOwnProperty]](propName, { value, enumerable, configurable, writable })?`
+11. Otherwise, if `Type(initializer)` is Object:
+  1. If `'get'` not in *initializer* and `'set'` not in *initializer*, throw a TypeError
+  2. Let *get* = `Get(initializer, 'get')?`
+  3. Let *set* = `Get(initializer, 'set')?`
+  4. Return `object.[[DefineOwnProperty]](propName, { get, set, enumerable, configurable, writable })?`
+12. Otherwise, if *initializer* is `null`, return
+13. Otherwise, throw a TypeError
+
+---
+
+#### Algorithm: PropertyDefinitionDescriptor(nameThunk, valueThunk, getter, setter)
+
+1. Let *object* = `ObjectCreate(%ObjectPrototype%)`
+2. `CreateDataProperty(object, 'name', nameThunk)?`
+3. `CreateDataProperty(object, 'initializer', valueThunk)?`
+4. Let *decoratorGetter* = `new DecoratorGetter`
+5. `decoratorGetter.[[Name]] = nameThunk`
+6. `CreateDataProperty(object, 'get', decoratorGetter)?`
+7. Let *decoratorSetter* = `new DecoratorSetter`
+8. `decoratorSetter.[[Name]] = nameThunk`
+9. `CreateDataProperty(object, 'set', decoratorSetter)?`
+10. Return *object*
+
+#### The DecoratorGetter Exotic Object
+
+Internal Slots:
+
+| Internal Slot    | Type              | Description |
+| ---------------- | ----------------- | ----------- |
+| `[[Name]]`       | ThunkedExpression | A thunk that, when called, returns a string |
+
+##### [[Call]] (thisArgument, [ object ])
+
+1. Let *name* = `Call(this.[[Name]])?`
+2. Return `Get(object, name)?`
+
+#### The DecoratorSetter Exotic Object
+
+| Internal Slot    | Type              | Description |
+| ---------------- | ----------------- | ----------- |
+| `[[Name]]`       | ThunkedExpression | A thunk that, when called, returns a string |
+
+##### [[Call]] (thisArgument, [ object, value ])
+
+1. Let *name* = `Call(this.[[Name]])`
+2. Return `Set(object, name, value, false)?`
 
 ---
 
@@ -821,19 +850,19 @@ into a function that, when called, evaluates the expression (a "thunk").
 
 ---
 
-#### The ThunkedExpression Exotic Object
+#### The Thunk Exotic Object
 
 Internal Slots:
 
-| Internal Slot    | Type       | Description |
-| ---------------- | ---------- | ----------- |
-| `[[Expression]]` | Expression | An unevaluated JavaScript expression |
-| `[[Value]]`      | any        | The value of the JavaScript expression, once evaluated |
+| Internal Slot    | Type        | Description |
+| ---------------- | ----------- | ----------- |
+| `[[Expression]]` | Expression  | An unevaluated expression |
+| `[[Value]]`      | any         | The value of the JavaScript reference, once evaluated |
 
 ##### [[Call]]
 
 1. If `this.[[Value]]` is populated, return `this.[[Value]]`
-2. Let *value* = `Evaluate(this.[[Expression]])`
+2. Let *value* = `GetValue(Evaluate(this.[[Expression]]))?`
 3. `this.[[Value]]` = *value*
 4. Return *value*
 
@@ -849,29 +878,35 @@ function PropertyDefinitionEvaluation(object: Object, decorators: Decorator[], d
   let expressionThunk = new Thunk(definition.AssignmentExpression);
 
   let initialDescriptor = {
-    type: 'property-definition',
-    name: propertyNameThunk,
-    initializer: assignmentExpressionThunk,
+    type: 'property',
     enumerable: true,
     configurable: true,
-    writable: true
+    writable: true,
+    property: {
+      name: propertyNameThunk,
+      initializer: expressionThunk,
+      get(obj) { return obj[Call(propertyNameThunk)]; },
+      set(obj, val) { obj[Call(propertyNameThunk)] = val; }
+    }
   };
-  
+
   let descriptor = decorators.reverse().reduce((descriptor, decorator) => {
     let possibleDescriptor = Evaluate(decorator)(object, descriptor);
     return possibleDescriptor === undefined ? descriptor : possibleDescriptor;
   }, initialDescriptor);
+
+  let { enumerable, configurable, writable, property } = descriptor;
+  let name = Call(property.name);
+  let initializer = property.initializer;
   
-  let { enumerable, configurable, writable, initializer, get, set } = descriptor;
-  let name = Call(descriptor.name);
+  if (initializer === null) return;
   
-  if ('initializer' in descriptor) {
-    assert(!('get' in descriptor) && !('set' in descriptor), TypeError);
-    let value = initializer();
+  if (typeof 'initializer' === 'function') {
+    let value = Call(initializer);
     Object.defineProperty(obj, name, { value, enumerable, configurable, writable });
-  } else if ('get' in descriptor || 'set' in descriptor) {
+  } else if (typeof initializer === 'object') {
+    let { get, set } = property;
     Object.defineProperty(obj, name, { get, set, enumerable, configurable, writable });
-    return;
   } else {
     throw new TypeError(); 
   }
@@ -887,6 +922,8 @@ function Thunk {
   }
 }
 ```
+
+---
 
 ## Appendix: Decorator Descriptor List
 
@@ -972,6 +1009,8 @@ interface AccessorProperty<Class> extends Property<Class> {
 }
 ```
 
+---
+
 ## Appendix: Assumed Library APIs
 
 Since this proposal is on a parallel track with declarative fields, it
@@ -993,6 +1032,8 @@ interface Initializer {
   (): any // thunk
 }
 ```
+
+---
 
 ## Appendix: General Purpose Utilities
 
