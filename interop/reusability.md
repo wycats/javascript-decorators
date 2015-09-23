@@ -76,8 +76,6 @@ Other decorators will be documented in terms of their effects on the
 target, which might include completely replacing the property they
 are decorating, wrapping it, or installing other properties.
 
-With great power comes great responsibility.
-
 ## Usage With Property Declarations in JavaScript
 
 The examples below use a few library functions that are defined in an
