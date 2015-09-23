@@ -28,6 +28,8 @@ function reader(target, descriptor) {
     // as the property it's decorating
     enumerable, configurable, get: function() { return get(this, name); }
   });
+  
+  return descriptor;
 }
 
 function extractPublicName(name) {
