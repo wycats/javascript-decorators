@@ -398,6 +398,165 @@ decorate(target, 'property', [reader], Property('_first', () => "Mark"), 'explic
 decorate(target, 'property', [reader], Property('_last', () => "Miller"), 'explicit'));
 ```
 
+## Methods
+
+The same decorator would work on methods.
+
+```js
+const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
+
+class Person {
+  @reader [first], [last];
+
+  constructor(first, last) {
+    this[first] = first;
+    this[last] = last;
+  }
+
+  @reader [update](first, last) {
+    this[first] = first;
+    this[last] = last;
+  }
+}
+```
+
+#### Usage
+
+```js
+let alex = new Person("Alex", "Russell");
+alex.first // "Alex"
+alex.update("Alexander", "Russell");
+alex.first // "Alexander"
+```
+
+#### Resulting Class
+
+```js
+const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
+
+class Person {
+  [first], [last];
+
+  constructor(first, last) {
+    this[first] = first;
+    this[last] = last;
+  }
+
+  [update](first, last) {
+    this[first] = first;
+    this[last] = last;
+  }
+
+  get first() {
+    return this[first];
+  }
+
+  get last() {
+    return this[last];
+  }
+
+  get update() {
+    return this[update];
+  }
+}
+```
+
+#### Desugaring
+
+```js
+const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
+
+class Person {
+  constructor(first, last) {
+    this[first] = first;
+    this[last] = last;
+  }
+}
+
+let target = Person.prototype;
+
+decorate(target, 'field',  [reader], Property('_first'));
+decorate(target, 'field',  [reader], Property('_last'));
+decorate(target, 'method', [reader], Property('_update', () => function _update() { /* ... */ }));
+```
+
+## Getters
+
+It would also work just fine with getters:
+
+```js
+class Person {
+  @reader _first, last;
+
+  constructor(first, last) {
+    this._first = first;
+    this._last = last;
+  }
+
+  @reader get _fullName() {
+    return `${this._first} ${this._last}`;
+  }
+}
+```
+
+#### Usage
+
+```js
+let jason = new Person("Jason", "Orendorff");
+
+jason.first // "Jason"
+jason.last // "Orendorff"
+jason.fullName // "Jason Orendorff"
+
+jason.update("JSON", "Orendorff")
+jason.first // "JSON"
+jason.fullName // "JSON Orendorff"
+```
+
+#### Resulting Class
+
+```js
+class Person {
+  constructor(first, last) {
+    this._first = first;
+    this._last = last;
+  }
+
+  get _fullName() {
+    return `${this._first} ${this._last}`;
+  }
+
+  get first() {
+    return this._first;
+  }
+
+  get last() {
+    return this._last;
+  }
+
+  get fullName() {
+    return this._fullName;
+  }
+}
+```
+
+#### Desugaring
+
+```js
+class Person {
+  constructor(first, last) {
+    this._first = first;
+    this._last = last;
+  }
+}
+
+let target = Person.prototype;
+
+decorate(target, 'field',    [reader], Property('_first'));
+decorate(target, 'field',    [reader], Property('_last'));
+decorate(target, 'accessor', [reader], Property({ get() { /* ... */ } }), 'getter');
+```
+
 ## "Uninitialized" Properties in Object Literals
 
 ```js
@@ -563,167 +722,6 @@ let target = Person.prototype;
 decorate(target, 'field',  [reader], Property('_first'));
 decorate(target, 'field',  [reader], Property('_last'));
 decorate(target, 'method', [reader], Property('_update', () => function _update() { /* ... */ }));
-```
-
-## Symbol Methods
-
-## Methods
-
-The same decorator would work on methods.
-
-```js
-const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
-
-class Person {
-  @reader [first], [last];
-
-  constructor(first, last) {
-    this[first] = first;
-    this[last] = last;
-  }
-
-  @reader [update](first, last) {
-    this[first] = first;
-    this[last] = last;
-  }
-}
-```
-
-#### Usage
-
-```js
-let alex = new Person("Alex", "Russell");
-alex.first // "Alex"
-alex.update("Alexander", "Russell");
-alex.first // "Alexander"
-```
-
-#### Resulting Class
-
-```js
-const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
-
-class Person {
-  [first], [last];
-
-  constructor(first, last) {
-    this[first] = first;
-    this[last] = last;
-  }
-
-  [update](first, last) {
-    this[first] = first;
-    this[last] = last;
-  }
-
-  get first() {
-    return this[first];
-  }
-
-  get last() {
-    return this[last];
-  }
-
-  get update() {
-    return this[update];
-  }
-}
-```
-
-#### Desugaring
-
-```js
-const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
-
-class Person {
-  constructor(first, last) {
-    this[first] = first;
-    this[last] = last;
-  }
-}
-
-let target = Person.prototype;
-
-decorate(target, 'field',  [reader], Property('_first'));
-decorate(target, 'field',  [reader], Property('_last'));
-decorate(target, 'method', [reader], Property('_update', () => function _update() { /* ... */ }));
-```
-
-## Getters
-
-It would also work just fine with getters:
-
-```js
-class Person {
-  @reader _first, last;
-
-  constructor(first, last) {
-    this._first = first;
-    this._last = last;
-  }
-
-  @reader get _fullName() {
-    return `${this._first} ${this._last}`;
-  }
-}
-```
-
-#### Usage
-
-```js
-let jason = new Person("Jason", "Orendorff");
-
-jason.first // "Jason"
-jason.last // "Orendorff"
-jason.fullName // "Jason Orendorff"
-
-jason.update("JSON", "Orendorff")
-jason.first // "JSON"
-jason.fullName // "JSON Orendorff"
-```
-
-#### Resulting Class
-
-```js
-class Person {
-  constructor(first, last) {
-    this._first = first;
-    this._last = last;
-  }
-
-  get _fullName() {
-    return `${this._first} ${this._last}`;
-  }
-
-  get first() {
-    return this._first;
-  }
-
-  get last() {
-    return this._last;
-  }
-
-  get fullName() {
-    return this._fullName;
-  }
-}
-```
-
-#### Desugaring
-
-```js
-class Person {
-  constructor(first, last) {
-    this._first = first;
-    this._last = last;
-  }
-}
-
-let target = Person.prototype;
-
-decorate(target, 'field',    [reader], Property('_first'));
-decorate(target, 'field',    [reader], Property('_last'));
-decorate(target, 'accessor', [reader], Property({ get() { /* ... */ } }), 'getter');
 ```
 
 ## Appendix: Making `PropertyDefinitionEvaluation` Decoratable
