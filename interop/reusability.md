@@ -437,14 +437,14 @@ const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
 class Person {
   [first], [last];
 
-  constructor(first, last) {
-    this[first] = first;
-    this[last] = last;
+  constructor(firstName, lastName) {
+    this[first] = firstName;
+    this[last] = lastName;
   }
 
-  [update](first, last) {
-    this[first] = first;
-    this[last] = last;
+  [update](firstName, lastName) {
+    this[first] = firstName;
+    this[last] = lastName;
   }
 
   get first() {
@@ -467,9 +467,9 @@ class Person {
 const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
 
 class Person {
-  constructor(first, last) {
-    this[first] = first;
-    this[last] = last;
+  constructor(firstName, lastName) {
+    this[first] = firstName;
+    this[last] = lastName;
   }
 }
 
