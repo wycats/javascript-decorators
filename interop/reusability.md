@@ -408,14 +408,14 @@ const first = Symbol("first"), last = Symbol("last"), update = Symbol("update");
 class Person {
   @reader [first], [last];
 
-  constructor(first, last) {
-    this[first] = first;
-    this[last] = last;
+  constructor(firstName, lastName) {
+    this[first] = firstName;
+    this[last] = lastName;
   }
 
-  @reader [update](first, last) {
-    this[first] = first;
-    this[last] = last;
+  @reader [update](firstName, lastName) {
+    this[first] = firstName;
+    this[last] = lastName;
   }
 }
 ```
