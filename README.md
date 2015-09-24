@@ -40,7 +40,7 @@ A decorator precedes the syntax that defines a property:
 
 ```js
 class Person {
-  @readonly
+  @readOnly
   name() { return `${this.first} ${this.last}` }
 }
 ```
@@ -56,7 +56,7 @@ let descriptor = {
   writable: true
 };
 
-descriptor = readonly(Person.prototype, 'name', descriptor) || descriptor;
+descriptor = readOnly(Person.prototype, 'name', descriptor) || descriptor;
 Object.defineProperty(Person.prototype, 'name', descriptor);
 ```
 
@@ -68,11 +68,11 @@ accessor descriptor:
 
 ```js
 class Person {
-  @nonenumerable
+  @nonEnumerable
   get kidCount() { return this.children.length; }
 }
 
-function nonenumerable(target, name, descriptor) {
+function nonEnumerable(target, name, descriptor) {
   descriptor.enumerable = false;
   return descriptor;
 }
