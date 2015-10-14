@@ -14,8 +14,6 @@ class Person {
   constructor(first, last) {
     #first = first;
     #last = last;
-    this._first = first;
-    this._last = last;
   }
 
   @reader get #fullName() {
