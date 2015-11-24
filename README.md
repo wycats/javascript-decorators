@@ -63,8 +63,8 @@ let description = {
 description = readonly(Person.prototype, 'name', description) || description;
 defineDecoratedProperty(Person.prototype, 'name', description);
 
-function defineDecoratedProperty(target, { initializer, enumerable, configurable, writable }) {
-  Object.defineProperty(target, { value: initializer(), enumerable, configurable, writable });
+function defineDecoratedProperty(target, prop, { initializer, enumerable, configurable, writable }) {
+  Object.defineProperty(target, prop { value: initializer(), enumerable, configurable, writable });
 }
 ```
 
@@ -85,7 +85,7 @@ let description = {
   configurable: true
 }
 
-function nonenumerable(target, name, description) {
+function nonenumerable(target, name, descriptor) {
   descriptor.enumerable = false;
   return descriptor;
 }
