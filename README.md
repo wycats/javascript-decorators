@@ -78,14 +78,14 @@ class Person {
   get kidCount() { return this.children.length; }
 }
 
-let description = {
+let descriptor = {
   type: 'accessor',
   get: specifiedGetter,
   enumerable: true,
   configurable: true
 }
 
-function nonenumerable(target, name, description) {
+function nonenumerable(target, name, descriptor) {
   descriptor.enumerable = false;
   return descriptor;
 }
