@@ -1,5 +1,78 @@
-> This file is under active development. Refer to `interop/reusability.md` for the
-> most up to date description.
+# What Are Decorators?
+
+Decorators provide a powerful (but syntactically limited) form of metaprogramming.
+
+It can be used to attach metadata, add [advice][advice], or even replace the original
+function or class altogether.
+
+[advice]: https://en.wikipedia.org/wiki/Advice_(programming)
+
+The first iteration of the decorators proposal supports decorators on classes:
+
+* classes
+* static methods and getters
+* instance methods and getters
+* properties on object literals
+
+The proposal closely tracks the progress of [class fields][fields] and
+[private][ks-private] [state][yk-private]. (We intend to try to ship decorated
+versions of new class syntax in a similar timeframe as the new class syntax
+itself.)
+
+[fields]: https://github.com/jeffmo/es-class-fields-and-static-properties
+[yk-private]: https://github.com/wycats/javascript-private-state
+[ks-private]: https://github.com/zenparsing/es-private-fields
+
+## Motivating Use Cases
+
+There are many more use-cases than the ones enumerated here, but here are
+some use cases that were influential during the design process.
+
+Because decorators, in the current version of the proposal, do not enable any
+fundamentally new capabilities, all of the use-cases cases were motivated by
+improving ergonomics and compositionality.
+
+* Nonconfigurable, enumerable, and readonly methods
+* "Defensive classes" (where all members are nonconfigurable and/or readonly)
+* Adding "Annotations", which provide data and do not affect the behavior of
+  the decorated production.
+* Creating additional properties. (For example, a decorator that creates a public
+  accessor for a symbol method.)
+
+## Basic Usage
+
+### On Methods
+
+#### Usage
+
+```js
+class Person {
+  constructor(first, last) {
+    this.first = first;
+    this.last = last;
+
+    Object.seal(this);
+  }
+
+  @nonconfigurable fullName() {
+    return `${this.first} ${this.last}`;
+  }
+}
+```
+
+#### Decorator Definition
+
+```js
+export function nonconfigurable(mirrors) {
+
+}
+```
+
+### On Classes
+
+### On Object Literal Properties
+
+## The Mirror Interface
 
 # Summary
 
@@ -416,50 +489,50 @@ var o = (function () {
 
 # Grammar
 
-&emsp;&emsp;*DecoratorList*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;*DecoratorList*<sub> [Yield]</sub>&emsp;:
 &emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp; *Decorator*<sub> [?Yield]</sub>
 
-&emsp;&emsp;*Decorator*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;*Decorator*<sub> [Yield]</sub>&emsp;:
 &emsp;&emsp;&emsp;`@`&emsp;*LeftHandSideExpression*<sub> [?Yield]</sub>
 
-&emsp;&emsp;*PropertyDefinition*<sub> [Yield]</sub>&emsp;:  
-&emsp;&emsp;&emsp;*IdentifierReference*<sub> [?Yield]</sub>  
-&emsp;&emsp;&emsp;*CoverInitializedName*<sub> [?Yield]</sub>  
-&emsp;&emsp;&emsp;*PropertyName*<sub> [?Yield]</sub>&emsp; `:`&emsp;*AssignmentExpression*<sub> [In, ?Yield]</sub>  
+&emsp;&emsp;*PropertyDefinition*<sub> [Yield]</sub>&emsp;:
+&emsp;&emsp;&emsp;*IdentifierReference*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;*CoverInitializedName*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;*PropertyName*<sub> [?Yield]</sub>&emsp; `:`&emsp;*AssignmentExpression*<sub> [In, ?Yield]</sub>
 &emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;*MethodDefinition*<sub> [?Yield]</sub>
 
-&emsp;&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [Yield]</sub>&emsp;:  
+&emsp;&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [Yield]</sub>&emsp;:
 &emsp;&emsp;&emsp;`[`&emsp;*Expression*<sub> [In, ?Yield]</sub>&emsp;`]`
 
-NOTE	The production *CoverMemberExpressionSquareBracketsAndComputedPropertyName* is used to cover parsing a *MemberExpression* that is part of a *Decorator* inside of an *ObjectLiteral* or *ClassBody*, to avoid lookahead when parsing a decorator against a *ComputedPropertyName*. 
+NOTE	The production *CoverMemberExpressionSquareBracketsAndComputedPropertyName* is used to cover parsing a *MemberExpression* that is part of a *Decorator* inside of an *ObjectLiteral* or *ClassBody*, to avoid lookahead when parsing a decorator against a *ComputedPropertyName*.
 
-&emsp;&emsp;*PropertyName*<sub> [Yield, GeneratorParameter]</sub>&emsp;:  
-&emsp;&emsp;&emsp;*LiteralPropertyName*  
-&emsp;&emsp;&emsp;[+GeneratorParameter] *CoverMemberExpressionSquareBracketsAndComputedPropertyName*  
+&emsp;&emsp;*PropertyName*<sub> [Yield, GeneratorParameter]</sub>&emsp;:
+&emsp;&emsp;&emsp;*LiteralPropertyName*
+&emsp;&emsp;&emsp;[+GeneratorParameter] *CoverMemberExpressionSquareBracketsAndComputedPropertyName*
 &emsp;&emsp;&emsp;[~GeneratorParameter] *CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>
 
-&emsp;&emsp;*MemberExpression*<sub> [Yield]</sub>&emsp; :  
-&emsp;&emsp;&emsp;[Lexical goal *InputElementRegExp*] *PrimaryExpression*<sub> [?Yield]</sub>  
-&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>  
-&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;`.`&emsp;*IdentifierName*  
-&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*TemplateLiteral*<sub> [?Yield]</sub>  
-&emsp;&emsp;&emsp;*SuperProperty*<sub> [?Yield]</sub>  
-&emsp;&emsp;&emsp;*NewSuper*&emsp;*Arguments*<sub> [?Yield]</sub>  
+&emsp;&emsp;*MemberExpression*<sub> [Yield]</sub>&emsp; :
+&emsp;&emsp;&emsp;[Lexical goal *InputElementRegExp*] *PrimaryExpression*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;`.`&emsp;*IdentifierName*
+&emsp;&emsp;&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*TemplateLiteral*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;*SuperProperty*<sub> [?Yield]</sub>
+&emsp;&emsp;&emsp;*NewSuper*&emsp;*Arguments*<sub> [?Yield]</sub>
 &emsp;&emsp;&emsp;`new`&emsp;*MemberExpression*<sub> [?Yield]</sub>&emsp;*Arguments*<sub> [?Yield]</sub>
 
-&emsp;&emsp;*SuperProperty*<sub> [Yield]</sub>&emsp;:  
-&emsp;&emsp;&emsp;`super`&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>  
+&emsp;&emsp;*SuperProperty*<sub> [Yield]</sub>&emsp;:
+&emsp;&emsp;&emsp;`super`&emsp;*CoverMemberExpressionSquareBracketsAndComputedPropertyName*<sub> [?Yield]</sub>
 &emsp;&emsp;&emsp;`super`&emsp;`.`&emsp;*IdentifierName*
 
-&emsp;&emsp;*ClassDeclaration*<sub> [Yield, Default]</sub>&emsp;:  
-&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;`class`&emsp;*BindingIdentifier*<sub> [?Yield]</sub>&emsp;*ClassTail*<sub> [?Yield]</sub>  
+&emsp;&emsp;*ClassDeclaration*<sub> [Yield, Default]</sub>&emsp;:
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;`class`&emsp;*BindingIdentifier*<sub> [?Yield]</sub>&emsp;*ClassTail*<sub> [?Yield]</sub>
 &emsp;&emsp;&emsp;[+Default] *DecoratorList*<sub> [?Yield]opt</sub>&emsp;`class`&emsp;*ClassTail*<sub> [?Yield]</sub>
 
-&emsp;&emsp;*ClassExpression*<sub> [Yield, GeneratorParameter]</sub>&emsp;:  
+&emsp;&emsp;*ClassExpression*<sub> [Yield, GeneratorParameter]</sub>&emsp;:
 &emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;`class`&emsp;*BindingIdentifier*<sub> [?Yield]opt</sub>&emsp;*ClassTail*<sub> [?Yield, ?GeneratorParameter]</sub>
 
-&emsp;&emsp;*ClassElement*<sub> [Yield]</sub>&emsp;:  
-&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;*MethodDefinition*<sub> [?Yield]</sub>  
+&emsp;&emsp;*ClassElement*<sub> [Yield]</sub>&emsp;:
+&emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;*MethodDefinition*<sub> [?Yield]</sub>
 &emsp;&emsp;&emsp;*DecoratorList*<sub> [?Yield]opt</sub>&emsp;`static`&emsp;*MethodDefinition*<sub> [?Yield]</sub>
 
 # Notes

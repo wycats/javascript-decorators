@@ -1,0 +1,22 @@
+{
+  "name": "javascript-decorators",
+  "version": "1.0.0",
+  "description": "Decorators provide a powerful (but syntactically limited) form of metaprogramming.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wycats/javascript-decorators.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wycats/javascript-decorators/issues"
+  },
+  "homepage": "https://github.com/wycats/javascript-decorators#readme",
+  "devDependencies": {
+    "typescript": "^1.8.0-dev.20160123"
+  }
+}
