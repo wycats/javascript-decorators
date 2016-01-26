@@ -1,31 +1,51 @@
+type MirrorState = "decorating" | "decorated";
+
 interface Mirror {
-    kind: string;
-
-    // YK: what's this for?
-    mutable: boolean;
-
-    // YK: punt for now
-    // defineMetadata(key: any, value: any): void;
-    // deleteMetadata(key: any): boolean;
-    // hasMetadata(key: any, options?: { inherited?: boolean; }): boolean;
-    // getMetadata(key: any, options?: { inherited?: boolean; }): any;
-    // getMetadataKeys(options?: { inherited?: boolean; }): any[];
+  kind: string;
+  state: MirrorState;
 }
 
 interface ObjectMirror extends Mirror {
-    object: any;
-    defineProperty(propertyKey: PropertyKey, descriptor: PropertyDescriptor, options?: { static?: boolean; }): PropertyMirror;
-    deleteProperty(propertyKey: PropertyKey, options?: { static?: boolean; }): boolean;
-    hasOwnProperty(propertyKey: PropertyKey, options?: { static?: boolean; }): boolean;
-    getOwnProperty(propertyKey: PropertyKey, options?: { static?: boolean; }): PropertyMirror;
-    getOwnProperties(options?: { static?: boolean; }): PropertyMirror[];
+    target: Object;
+
+    // 26.1.1 and 26.1.2 are defined on FunctionMirror, below
+
+    // 26.1.3
+    defineProperty(propertyKey: PropertyKey, descriptor: PropertyDescriptor): PropertyMirror;
+    // 26.1.4
+    deleteProperty(propertyKey: PropertyKey): boolean;
+    // 26.1.5
+    enumerate(): Iterator<any>;
+    // 26.1.6
+    get(propertyKey: PropertyKey, receiver?: any): any;
+    // 26.1.7
+    getOwnProperty(propertyKey: PropertyKey): PropertyMirror;
+    // 26.1.8
+    getPrototype(): Object;
+    // 26.1.9
+    has(propertyKey: PropertyKey): boolean;
+    // 26.1.10
+    isExtensible(): boolean;
+    // 26.1.11
+    ownKeys(): PropertyKey[];
+    // 26.1.12
+    preventExtensions(): boolean;
+    // 26.1.13
+    set(propertyKey: PropertyKey, value: any, receiver?: any);
+    // 26.1.14
+    setPrototype(value: Object): boolean;
 }
 
 export interface FunctionMirror extends ObjectMirror {
-  // should these be part of a FunctionMirror super-interface?
-  name: string;
-  length: number;
+  // "name" and "length" are properties and should be
+  // controlled using regular property mechanisms
+
   parameters: ParameterMirror[];
+
+  // 26.1.1
+  apply(thisArg: any, argumentsList: any[]): any;
+  // 26.1.2
+  construct(argumentsList: any[], newTarget: typeof Object): any;
 }
 
 export interface ClassMirror extends ObjectMirror, FunctionMirror {
