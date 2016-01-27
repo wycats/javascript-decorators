@@ -6,6 +6,10 @@ import {
 } from "../mirror";
 
 import {
+  Mirror
+} from "./mirror";
+
+import {
   ObjectMirror
 } from "./object";
 
@@ -22,23 +26,25 @@ export interface PropertyMirrorOptions {
   name: PropertyKey;
   enumerable: boolean;
   configurable: boolean;
-  object: IObjectMirror;
+  parent: IObjectMirror;
 }
 
-export abstract class PropertyMirror implements IPropertyMirror {
-  kind = "property";
+export abstract class PropertyMirror extends Mirror implements IPropertyMirror {
+  kind: "data";
   mutable = true;
 
+  parent: IObjectMirror;
   name: PropertyKey;
   enumerable: boolean;
   configurable: boolean;
-  object: IObjectMirror;
 
-  constructor({ name, enumerable, configurable, object }: PropertyMirrorOptions) {
+  constructor({ name, enumerable, configurable, parent }: PropertyMirrorOptions) {
+    super({ kind: "data", state: "decorating" });
+
     this.name = name;
     this.enumerable = enumerable;
     this.configurable = configurable;
-    this.object = object;
+    this.parent = parent;
   }
 }
 
@@ -64,10 +70,8 @@ export class DataPropertyMirror extends PropertyMirror implements IDataPropertyM
   writable: boolean;
   value: any;
 
-  constructor(options: DataPropertyOptions) {
-    let { writable, value } = options;
-
-    super(options);
+  constructor({ parent, name, enumerable, configurable, writable, value }: DataPropertyOptions) {
+    super({ parent, name, enumerable, configurable });
     this.writable = writable;
     this.value = value;
   }

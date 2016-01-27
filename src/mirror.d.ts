@@ -1,12 +1,13 @@
 type MirrorState = "decorating" | "decorated";
+type MirrorKind = "object" | "function" | "class" | "statics" | "data" | "accessor" | "parameter";
 
 interface Mirror {
-  kind: string;
-  state: MirrorState;
+    kind: MirrorKind;
+    state: MirrorState;
 }
 
 interface ObjectMirror extends Mirror {
-    target: Object;
+    kind: "object" | "function";
 
     // 26.1.1 and 26.1.2 are defined on FunctionMirror, below
 
@@ -37,51 +38,45 @@ interface ObjectMirror extends Mirror {
 }
 
 export interface FunctionMirror extends ObjectMirror {
-  // "name" and "length" are properties and should be
-  // controlled using regular property mechanisms
+    kind: "function";
 
-  parameters: ParameterMirror[];
+    // "name" and "length" are properties and should be
+    // controlled using regular property mechanisms
 
-  // 26.1.1
-  apply(thisArg: any, argumentsList: any[]): any;
-  // 26.1.2
-  construct(argumentsList: any[], newTarget: typeof Object): any;
+    // 26.1.1
+    apply(thisArg: any, argumentsList: any[]): any;
+    // 26.1.2
+    construct(argumentsList: any[], newTarget: typeof Object): any;
 }
 
-export interface ClassMirror extends ObjectMirror, FunctionMirror {
-    instanceSide: ObjectMirror;
-    staticSide: ObjectMirror;
+export interface ClassMirror {
+    kind: "class";
+
+    superclass: ClassMirror;
+    prototype: ObjectMirror;
+    statics: ObjectMirror;
+    constructorFunction: FunctionMirror;
 }
 
 export interface PropertyMirror extends Mirror {
+    kind: "data" | "accessor";
+
     name: PropertyKey;
     enumerable: boolean;
     configurable: boolean;
-    object: ObjectMirror;
-
-    // YK: what are these for?
-    // length: number;
-    // parameters: ParameterMirror[];
-}
-
-export interface ClassPropertyMirror extends PropertyMirror {
-    isStatic: boolean;
-    object: ClassMirror;
+    parent: ObjectMirror;
 }
 
 export interface DataPropertyMirror extends PropertyMirror {
+    kind: "data";
+
     writable: boolean;
     value: any;
 }
 
 export interface AccessorPropertyMirror extends PropertyMirror {
+    kind: "accessor";
+
     get: () => any;
     set: (value: any) => void;
-}
-
-export interface ParameterMirror extends Mirror {
-    index: number;
-
-    // YK: what is this?
-    parent: FunctionMirror;
 }

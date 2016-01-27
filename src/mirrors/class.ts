@@ -1,7 +1,8 @@
 import {
   ObjectMirror as IObjectMirror,
   ClassMirror as IClassMirror,
-  ClassPropertyMirror as IClassPropertyMirror
+  ClassPropertyMirror as IClassPropertyMirror,
+  FunctionMirror as IFunctionMirror
 } from "../mirror";
 
 import {
@@ -25,24 +26,28 @@ import {
 } from "./function";
 
 interface ClassMirrorOptions extends FunctionMirrorOptions {
-  instanceSide: IObjectMirror;
-  staticSide: IObjectMirror;
+  prototype: IObjectMirror;
+  statics: IObjectMirror;
+  superclass: IClassMirror;
+  constructorFunction: IFunctionMirror;
 }
 
-class ClassMirror extends ObjectMirror implements IClassMirror {
+class ClassMirror implements IClassMirror {
+  public kind: "class" = "class";
   public name: string;
   public length: number;
   public parameters: ParameterMirror[];
 
-  public staticSide: ObjectMirror;
-  public instanceSide: ObjectMirror;
+  public statics: IObjectMirror;
+  public prototype: IObjectMirror;
+  public superclass: IClassMirror;
+  public constructorFunction: IFunctionMirror;
 
-  constructor(options: ClassMirrorOptions) {
-    let { instanceSide, staticSide } = options;
-    super(options);
-
-    this.staticSide = staticSide;
-    this.instanceSide = instanceSide;
+  constructor({ prototype, statics, superclass, constructorFunction }: ClassMirrorOptions) {
+    this.statics = statics;
+    this.prototype = prototype;
+    this.superclass = superclass;
+    this.constructorFunction = constructorFunction;
   }
 }
 

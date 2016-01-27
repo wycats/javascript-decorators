@@ -1,6 +1,6 @@
 import {
+  Mirror,
   FunctionMirror,
-  ParameterMirror,
   ClassMirror
 } from "../mirror";
 
@@ -28,9 +28,12 @@ export interface NormalFunctionMirror extends ExtendedFunctionMirror {
   toMethod(homeObject: typeof Object): MethodMirror;
 }
 
-export interface ExtendedClassMirror extends ClassMirror, ExtendedFunctionMirror {
-  functionKind: "classConstructor";
-  constructorKind: "base" | "derived";
+export interface ConstructorFunctionMirror extends ExtendedFunctionMirror {
+  functionKind: "constructor";
+}
+
+export interface ExtendedClassMirror extends ClassMirror {
+  constructorFunction: ConstructorFunctionMirror;
 }
 
 export interface MethodMirror extends ExtendedFunctionMirror {
@@ -47,6 +50,10 @@ export interface BoundFunctionMirror extends ExtendedFunctionMirror {
 }
 
 
-export interface ExtendedParameterMirror extends ParameterMirror {
+export interface ParameterMirror extends Mirror {
+  kind: "parameter";
+
   patternKind: "normal" | "default" | "rest";
+  index: number;
+  parent: FunctionMirror;
 }
