@@ -138,8 +138,11 @@ takes the target constructor.
 class MyClass { }
 
 function annotation(target) {
-   // Add a property on target
-   target.annotated = true;
+  //return a new constructor
+  return function (){ 
+    // Add a property on target
+    this.annotated = true;
+  }
 }
 ```
 
