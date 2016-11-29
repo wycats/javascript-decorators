@@ -201,7 +201,7 @@ var Foo = (function () {
   class Foo {
   }
 
-  Foo = F("color")(Foo = G(Foo) || Foo) || Foo;
+  Foo = G(Foo = F("color")(Foo) || Foo) || Foo;
   return Foo;
 })();
 ```
@@ -213,7 +213,7 @@ var Foo = (function () {
   function Foo() {
   }
 
-  Foo = F("color")(Foo = G(Foo) || Foo) || Foo;
+  Foo = G(Foo = F("color")(Foo) || Foo) || Foo;
   return Foo;
 })();
 ```
@@ -239,8 +239,8 @@ var Foo = (function () {
   }
 
   var _temp;
-  _temp = F("color")(Foo.prototype, "bar",
-    _temp = G(Foo.prototype, "bar",
+  _temp = G(Foo.prototype, "bar",
+    _temp = F("color")(Foo.prototype, "bar",
       _temp = Object.getOwnPropertyDescriptor(Foo.prototype, "bar")) || _temp) || _temp;
   if (_temp) Object.defineProperty(Foo.prototype, "bar", _temp);
   return Foo;
@@ -256,8 +256,8 @@ var Foo = (function () {
   Foo.prototype.bar = function () { }
 
   var _temp;
-  _temp = F("color")(Foo.prototype, "bar",
-    _temp = G(Foo.prototype, "bar",
+  _temp = G(Foo.prototype, "bar",
+    _temp = F("color")(Foo.prototype, "bar",
       _temp = Object.getOwnPropertyDescriptor(Foo.prototype, "bar")) || _temp) || _temp;
   if (_temp) Object.defineProperty(Foo.prototype, "bar", _temp);
   return Foo;
@@ -287,8 +287,8 @@ var Foo = (function () {
   }
 
   var _temp;
-  _temp = F("color")(Foo.prototype, "bar",
-    _temp = G(Foo.prototype, "bar",
+  _temp = G(Foo.prototype, "bar",
+    _temp = F("color")(Foo.prototype, "bar",
       _temp = Object.getOwnPropertyDescriptor(Foo.prototype, "bar")) || _temp) || _temp;
   if (_temp) Object.defineProperty(Foo.prototype, "bar", _temp);
   return Foo;
@@ -308,8 +308,8 @@ var Foo = (function () {
   });
 
   var _temp;
-  _temp = F("color")(Foo.prototype, "bar",
-    _temp = G(Foo.prototype, "bar",
+  _temp = G(Foo.prototype, "bar",
+    _temp = F("color")(Foo.prototype, "bar",
       _temp = Object.getOwnPropertyDescriptor(Foo.prototype, "bar")) || _temp) || _temp;
   if (_temp) Object.defineProperty(Foo.prototype, "bar", _temp);
   return Foo;
@@ -337,8 +337,8 @@ var o = (function () {
   }
 
   var _temp;
-  _temp = F("color")(_obj, "bar",
-    _temp = G(_obj, "bar",
+  _temp = G(_obj, "bar",
+    _temp = F("color")(_obj, "bar",
       _temp = void 0) || _temp) || _temp;
   if (_temp) Object.defineProperty(_obj, "bar", _temp);
   return _obj;
@@ -354,8 +354,8 @@ var o = (function () {
     }
 
     var _temp;
-    _temp = F("color")(_obj, "bar",
-        _temp = G(_obj, "bar",
+    _temp = G(_obj, "bar",
+        _temp = F("color")(_obj, "bar",
             _temp = void 0) || _temp) || _temp;
     if (_temp) Object.defineProperty(_obj, "bar", _temp);
     return _obj;
@@ -385,8 +385,8 @@ var o = (function () {
   }
 
   var _temp;
-  _temp = F("color")(_obj, "bar",
-    _temp = G(_obj, "bar",
+  _temp = G(_obj, "bar",
+    _temp = F("color")(_obj, "bar",
       _temp = void 0) || _temp) || _temp;
   if (_temp) Object.defineProperty(_obj, "bar", _temp);
   return _obj;
@@ -406,8 +406,8 @@ var o = (function () {
   });
 
   var _temp;
-  _temp = F("color")(_obj, "bar",
-    _temp = G(_obj, "bar",
+  _temp = G(_obj, "bar",
+    _temp = F("color")(_obj, "bar",
       _temp = void 0) || _temp) || _temp;
   if (_temp) Object.defineProperty(_obj, "bar", _temp);
   return _obj;
