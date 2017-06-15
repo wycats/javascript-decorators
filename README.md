@@ -63,12 +63,12 @@ let description = {
 description = readonly(Person.prototype, 'name', description) || description;
 defineDecoratedProperty(Person.prototype, 'name', description);
 
-function defineDecoratedProperty(target, { initializer, enumerable, configurable, writable }) {
-  Object.defineProperty(target, { value: initializer(), enumerable, configurable, writable });
+function defineDecoratedProperty(target, prop, { initializer, enumerable, configurable, writable }) {
+  Object.defineProperty(target, prop, { value: initializer(), enumerable, configurable, writable });
 }
 ```
 
-The has an opportunity to intercede before the relevant `defineProperty` actually occurs.
+The docorator has an opportunity to intercede before the relevant `defineProperty` actually occurs.
 
 A decorator that precedes syntactic getters and/or setters operates on an accessor description:
 
