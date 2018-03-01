@@ -85,7 +85,7 @@ let description = {
   configurable: true
 }
 
-function nonenumerable(target, name, description) {
+function nonenumerable(target, name, descriptor) {
   descriptor.enumerable = false;
   return descriptor;
 }
