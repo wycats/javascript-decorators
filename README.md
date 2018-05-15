@@ -1,3 +1,5 @@
+**This proposal has been moved to [tc39](https://github.com/tc39/proposal-decorators).**
+
 > This file is under active development. Refer to `interop/reusability.md` for the
 > most up to date description.
 
