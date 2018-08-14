@@ -1,5 +1,4 @@
-> This file is under active development. Refer to `interop/reusability.md` for the
-> most up to date description.
+**This has moved to https://github.com/tc39/proposal-decorators**
 
 # Summary
 
