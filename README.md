@@ -85,8 +85,8 @@ let description = {
 }
 
 function nonenumerable(target, name, description) {
-  descriptor.enumerable = false;
-  return descriptor;
+  description.enumerable = false;
+  return description;
 }
 ```
 
