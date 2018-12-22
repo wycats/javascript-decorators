@@ -62,8 +62,8 @@ let description = {
 description = readonly(Person.prototype, 'name', description) || description;
 defineDecoratedProperty(Person.prototype, 'name', description);
 
-function defineDecoratedProperty(target, { initializer, enumerable, configurable, writable }) {
-  Object.defineProperty(target, { value: initializer(), enumerable, configurable, writable });
+function defineDecoratedProperty(target, key, { initializer, enumerable, configurable, writable }) {
+  Object.defineProperty(target, key, { value: initializer(), enumerable, configurable, writable });
 }
 ```
 
