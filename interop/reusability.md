@@ -759,7 +759,7 @@ like this:
 DecoratedPropertyDefinition: DecoratorExpression+ PropertyDefinition;
 ```
 
-In this case, we we see that Step 1 of the original algorithm evaluates an expression,
+In this case, we see that Step 1 of the original algorithm evaluates an expression,
 so the decorator must intercede at the very beginning of the process.
 
 The two top-level expressions in the decorated `PropertyDefinition` are `PropertyName`
@@ -1035,7 +1035,7 @@ interface Initializer {
 
 ## Appendix: General Purpose Utilities
 
-The defininition of the utilities used throughout the rest of this document.
+The definition of the utilities used throughout the rest of this document.
 
 ```js
 const DESCRIPTOR_DEFAULTS = {
