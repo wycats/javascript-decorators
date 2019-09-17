@@ -67,7 +67,7 @@ function defineDecoratedProperty(target, { initializer, enumerable, configurable
 }
 ```
 
-The has an opportunity to intercede before the relevant `defineProperty` actually occurs.
+The decorator has an opportunity to intercede before the relevant `defineProperty` actually occurs.
 
 A decorator that precedes syntactic getters and/or setters operates on an accessor description:
 
